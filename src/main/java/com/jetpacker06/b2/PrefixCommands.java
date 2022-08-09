@@ -9,13 +9,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Commands extends ListenerAdapter {
-    public static GenericEvent recentEvent;
-    public static Map<String, Runnable> MapOfCommands = new HashMap<>();
+public class PrefixCommands extends ListenerAdapter {
+    public static Map<String, Runnable> prefixCommandsMap = new HashMap<>();
 
     @Override
     public void onGenericEvent(@NotNull GenericEvent event) {
-        recentEvent = event;
+        B2.recentEvent = event;
     }
 
     @Override
@@ -23,24 +22,21 @@ public class Commands extends ListenerAdapter {
         if (event.getMessage().getAuthor().isBot()) return;
         String message = event.getMessage().getContentRaw();
         if (Util.isStringInList(message, getCommandsList())) {
-            MapOfCommands.get(message).run();
+            prefixCommandsMap.get(message).run();
         }
     }
     public static void addCommand(String command, Runnable task) {
-        MapOfCommands.put(B2.PREFIX + command, task);
+        prefixCommandsMap.put(B2.PREFIX + command, task);
     }
     public static String[] getCommandsList() {
-        return MapOfCommands.keySet().toArray(new String[0]);
+        return prefixCommandsMap.keySet().toArray(new String[0]);
     }
-    public static void sendMessage(String message) {
-        ((MessageReceivedEvent) recentEvent).getChannel().sendMessage(message).queue();
-    }
-    public static void registerCommands() {
+    public static void registerPrefixCommands() {
         addCommand("test", () -> {
-            sendMessage("oi");
+            Util.sendMessage("oi");
         });
         addCommand("hellothere", () -> {
-            sendMessage("general kenobi");
+            Util.sendMessage("general kenobi");
         });
     }
 }
